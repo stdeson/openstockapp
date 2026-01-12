@@ -10,11 +10,11 @@ def open_stock(data: dict):
     script = f'''
     set the clipboard to "{name}"
     tell application "System Events"
-        key code 49 using command down
-        delay 0.3
-        key code 9 using command down
-        delay 0.2
-        key code 36
+        key code 49 using command down -- Cmd+Space 打开 Spotlight
+        delay 0.1
+        key code 9 using command down -- Cmd+V 粘贴
+        delay 1 -- 等待 Spotlight 检索
+        key code 36 -- 回车
     end tell
     '''
     subprocess.run(["osascript", "-e", script])
