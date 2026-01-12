@@ -8,10 +8,11 @@ app = FastAPI()
 def open_stock(data: dict):
     name = data.get("name", "")
     script = f'''
+    set the clipboard to "{name}"
     tell application "System Events"
         key code 49 using command down
         delay 0.3
-        keystroke "{name}"
+        key code 9 using command down
         delay 0.2
         key code 36
     end tell
