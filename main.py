@@ -1,6 +1,7 @@
 import subprocess
 import uvicorn
-from fastapi import FastAPI
+import httpx
+from fastapi import FastAPI, Request, Response
 
 app = FastAPI()
 
@@ -19,6 +20,18 @@ def open_stock(data: dict):
     '''
     subprocess.run(["osascript", "-e", script])
     return {"ok": True}
+    
+@app.api_route("/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH"])
+async def proxy(request: Request, path: str):
+    async with httpx.AsyncClient() as client:
+        url = f"http://localhost:8002/{path}"
+        response = await client.request(
+            method=request.method,
+            url=url,
+            headers=dict(request.headers),
+            content=await request.body()
+        )
+        return Response(content=response.content, status_code=response.status_code, headers=dict(response.headers))
 
 if __name__ == '__main__':
     uvicorn.run(app, host='0.0.0.0', port=7002)
